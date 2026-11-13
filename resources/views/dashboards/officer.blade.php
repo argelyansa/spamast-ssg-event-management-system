@@ -1,181 +1,66 @@
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Officer Dashboard | SPAMAST SSG</title>
+@section('title', 'Officer Dashboard')
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@section('content')
 
-        body {
-            background: #0B1120;
-            color: #F8FAFC;
-            min-height: 100vh;
-        }
+    <section class="page-heading">
+        <h1>Welcome, {{ auth()->user()->name }}!</h1>
+        <p>Officer Dashboard — Event Management System</p>
+    </section>
 
-        header {
-            background: #111C32;
-            padding: 22px 40px;
-            border-bottom: 1px solid #1E293B;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    <section class="dashboard-grid">
 
-        header h1 {
-            color: #3B82F6;
-            font-size: 22px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-actions a,
-        .logout button {
-            background: #3B82F6;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .header-actions a {
-            background: #334155;
-        }
-
-        .header-actions a:hover {
-            background: #475569;
-        }
-
-        .logout button:hover {
-            background: #2563EB;
-        }
-
-        main {
-            padding: 40px;
-        }
-
-        .welcome {
-            margin-bottom: 30px;
-        }
-
-        .welcome h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .welcome p {
-            color: #94A3B8;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .dashboard-card {
-            background: #111C32;
-            border: 1px solid #1E293B;
-            border-radius: 12px;
-            padding: 25px;
-        }
-
-        .dashboard-card h3 {
-            color: #3B82F6;
-            margin-bottom: 12px;
-        }
-
-        .dashboard-card p {
-            color: #CBD5E1;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 600px) {
-            header, main {
-                padding: 20px;
-            }
-
-            header {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-
-            .header-actions {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <header>
-        <h1>SPAMAST SSG</h1>
-
-        <div class="header-actions">
-            <a href="{{ route('profile.edit') }}">My Profile</a>
-
-            <form class="logout" action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">Logout</button>
-            </form>
+        <div class="content-card">
+            <h3>Student Management</h3>
+            <p>View and manage student records.</p>
         </div>
-    </header>
 
-    <main>
-        <section class="welcome">
-            <h2>Welcome, {{ auth()->user()->name }}!</h2>
-            <p>Officer Dashboard — Event Management System</p>
-        </section>
+        <div class="content-card">
+            <h3>Event Management</h3>
+            <p>Create, update, and manage SSG events.</p>
+        </div>
 
-        <section class="dashboard-grid">
+        <div class="content-card">
+            <h3>Attendance Monitoring</h3>
+            <p>Monitor student event attendance and check-ins.</p>
+        </div>
 
-            <div class="dashboard-card">
-                <h3>Student Management</h3>
-                <p>View and manage student records.</p>
-            </div>
+        <div class="content-card">
+            <h3>Fines and Sanctions</h3>
+            <p>Manage attendance-related fines and sanctions.</p>
+        </div>
 
-            <div class="dashboard-card">
-                <h3>Event Management</h3>
-                <p>Create, update, and manage SSG events.</p>
-            </div>
+        <div class="content-card">
+            <h3>Announcements</h3>
+            <p>Publish important SSG announcements.</p>
+        </div>
 
-            <div class="dashboard-card">
-                <h3>Attendance Monitoring</h3>
-                <p>Monitor student event attendance and check-ins.</p>
-            </div>
+        <div class="content-card">
+            <h3>Reports</h3>
+            <p>View event and attendance reports.</p>
+        </div>
 
-            <div class="dashboard-card">
-                <h3>Fines and Sanctions</h3>
-                <p>Manage attendance-related fines and sanctions.</p>
-            </div>
+    </section>
 
-            <div class="dashboard-card">
-                <h3>Announcements</h3>
-                <p>Publish important SSG announcements.</p>
-            </div>
+@endsection
 
-            <div class="dashboard-card">
-                <h3>Reports</h3>
-                <p>View event and attendance reports.</p>
-            </div>
+@push('styles')
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
 
-        </section>
-    </main>
+    .dashboard-grid h3 {
+        color: #3B82F6;
+        margin-bottom: 12px;
+    }
 
-</body>
-</html>
+    .dashboard-grid p {
+        color: #64748B;
+        line-height: 1.6;
+    }
+</style>
+@endpush

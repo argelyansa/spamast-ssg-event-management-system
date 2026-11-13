@@ -1,171 +1,77 @@
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | SPAMAST SSG</title>
+@extends('layouts.app')
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+@section('title', 'Admin Dashboard')
 
-        body {
-            background: #0B1120;
-            color: #F8FAFC;
-            min-height: 100vh;
-        }
+@section('content')
 
-        header {
-            background: #111C32;
-            padding: 22px 40px;
-            border-bottom: 1px solid #1E293B;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    <section class="page-heading">
+        <h1>Welcome, {{ auth()->user()->name }}!</h1>
+        <p>Administrator Dashboard — Event Management System</p>
+    </section>
 
-        header h1 {
-            color: #3B82F6;
-            font-size: 22px;
-        }
+    <section class="dashboard-grid">
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        <a href="{{ route('admin.users.index') }}" class="content-card dashboard-card">
+            <h3>User Management</h3>
+            <p>Manage student, officer, and adviser accounts.</p>
+            <span class="card-link">Manage Users →</span>
+        </a>
 
-        .header-actions a,
-        .logout button {
-            background: #3B82F6;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .header-actions a {
-            background: #334155;
-        }
-
-        .header-actions a:hover {
-            background: #475569;
-        }
-
-        .logout button:hover {
-            background: #2563EB;
-        }
-
-        main {
-            padding: 40px;
-        }
-
-        .welcome {
-            margin-bottom: 30px;
-        }
-
-        .welcome h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .welcome p {
-            color: #94A3B8;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .dashboard-card {
-            background: #111C32;
-            border: 1px solid #1E293B;
-            border-radius: 12px;
-            padding: 25px;
-        }
-
-        .dashboard-card h3 {
-            color: #3B82F6;
-            margin-bottom: 12px;
-        }
-
-        .dashboard-card p {
-            color: #CBD5E1;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 600px) {
-            header, main {
-                padding: 20px;
-            }
-
-            header {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-
-            .header-actions {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <header>
-        <h1>SPAMAST SSG</h1>
-
-        <div class="header-actions">
-            <a href="{{ route('profile.edit') }}">My Profile</a>
-
-            <form class="logout" action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit">Logout</button>
-            </form>
+        <div class="content-card dashboard-card">
+            <h3>Institute Management</h3>
+            <p>Manage SPAMAST institutes and academic programs.</p>
         </div>
-    </header>
 
-    <main>
-        <section class="welcome">
-            <h2>Welcome, {{ auth()->user()->name }}!</h2>
-            <p>Administrator Dashboard — Event Management System</p>
-        </section>
+        <div class="content-card dashboard-card">
+            <h3>Event Management</h3>
+            <p>View and manage SSG events and activities.</p>
+        </div>
 
-        <section class="dashboard-grid">
+        <div class="content-card dashboard-card">
+            <h3>System Overview</h3>
+            <p>Access the main administrative features of the system.</p>
+        </div>
 
-            <div class="dashboard-card">
-                <h3>User Management</h3>
-                <p>Manage student, officer, and adviser accounts.</p>
-            </div>
+    </section>
 
-            <div class="dashboard-card">
-                <h3>Institute Management</h3>
-                <p>Manage SPAMAST institutes and academic programs.</p>
-            </div>
+@endsection
 
-            <div class="dashboard-card">
-                <h3>Event Management</h3>
-                <p>View and manage SSG events and activities.</p>
-            </div>
+@push('styles')
+<style>
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
 
-            <div class="dashboard-card">
-                <h3>System Overview</h3>
-                <p>Access the main administrative features of the system.</p>
-            </div>
+    .dashboard-card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 0.2s, transform 0.2s;
+    }
 
-        </section>
-    </main>
+    .dashboard-card h3 {
+        color: #3B82F6;
+        margin-bottom: 12px;
+    }
 
-</body>
-</html>
+    .dashboard-card p {
+        color: #64748B;
+        line-height: 1.6;
+    }
+
+    .dashboard-card:hover {
+        border-color: #3B82F6;
+        transform: translateY(-2px);
+    }
+
+    .card-link {
+        display: inline-block;
+        margin-top: 15px;
+        color: #2563EB;
+        font-weight: bold;
+    }
+</style>
+@endpush
