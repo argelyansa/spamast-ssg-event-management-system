@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Adviser Dashboard')
@@ -21,10 +22,11 @@
             <p>Read important SSG announcements.</p>
         </div>
 
-        <div class="content-card">
+        <a href="{{ route('adviser.attendance.events') }}"
+           class="content-card attendance-card">
             <h3>Attendance Records</h3>
             <p>Review student attendance by institute and program.</p>
-        </div>
+        </a>
 
         <div class="content-card">
             <h3>Fines and Sanctions</h3>
@@ -56,6 +58,16 @@
     .dashboard-grid p {
         color: #64748B;
         line-height: 1.6;
+    }
+
+    .attendance-card {
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .attendance-card:hover {
+        text-decoration: none;
     }
 </style>
 @endpush

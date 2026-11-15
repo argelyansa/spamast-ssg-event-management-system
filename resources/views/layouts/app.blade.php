@@ -8,6 +8,12 @@
 
     <title>@yield('title', 'Dashboard') | SPAMAST SSG</title>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <style>
         :root {
             --midnight: #0B1120;
@@ -21,13 +27,11 @@
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
             min-height: 100vh;
-            background: var(--white);
+            background: #F1F5F9;
             color: var(--slate);
             font-family: Arial, Helvetica, sans-serif;
         }
@@ -35,17 +39,20 @@
         .app-header {
             background: var(--midnight);
             color: white;
-            padding: 18px 5%;
+            padding: 16px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 20px;
             flex-wrap: wrap;
+            border-bottom: 3px solid var(--blue);
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.15);
         }
 
         .brand {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: .3px;
         }
 
         .brand span {
@@ -72,10 +79,10 @@
             background: var(--blue);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 9px 15px;
+            border-radius: 7px;
+            padding: 9px 16px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .logout-button:hover {
@@ -83,47 +90,15 @@
         }
 
         .page-container {
-            width: 90%;
-            max-width: 1200px;
+            width: 92%;
+            max-width: 1440px;
             margin: 35px auto;
-        }
-
-        .page-heading {
-            margin-bottom: 25px;
-        }
-
-        .page-heading h1 {
-            color: var(--midnight);
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .page-heading p {
-            color: var(--gray);
+            min-height: calc(100vh - 190px);
         }
 
         .alert {
-            padding: 13px 16px;
-            border-radius: 7px;
+            border-radius: 9px;
             margin-bottom: 18px;
-        }
-
-        .alert-success {
-            background: #DCFCE7;
-            color: #166534;
-        }
-
-        .alert-error {
-            background: #FEE2E2;
-            color: #991B1B;
-        }
-
-        .content-card {
-            background: white;
-            border: 1px solid var(--light-gray);
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.05);
         }
 
         .app-footer {
@@ -131,6 +106,33 @@
             padding: 25px 15px;
             color: var(--gray);
             font-size: 13px;
+        }
+
+        /* Form styling */
+        .card {
+            border-radius: 14px !important;
+        }
+
+        .form-control,
+        .form-select,
+        .input-group-text {
+            border-color: #CBD5E1;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 .2rem rgba(59, 130, 246, .15);
+        }
+
+        .btn-primary {
+            background-color: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .btn-primary:hover {
+            background-color: #2563EB;
+            border-color: #2563EB;
         }
 
         @media (max-width: 600px) {
@@ -143,12 +145,9 @@
                 gap: 12px;
             }
 
-            .page-heading h1 {
-                font-size: 23px;
-            }
-
-            .content-card {
-                padding: 18px;
+            .page-container {
+                width: 94%;
+                margin: 22px auto;
             }
         }
     </style>
@@ -187,18 +186,8 @@
         @endif
 
         @if (session('error'))
-            <div class="alert alert-error">
+            <div class="alert alert-danger">
                 {{ session('error') }}
-            </div>
-        @endif
-
-        @if ($errors->any())
-            <div class="alert alert-error">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
             </div>
         @endif
 
@@ -210,6 +199,9 @@
         SPAMAST Supreme Student Government Event Management System
         &copy; {{ date('Y') }}
     </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')
 </body>

@@ -36,4 +36,51 @@ class EventSession extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    public function isCheckInOpen(): bool
+    {
+        return $this->isOpen('check_in');
+    }
+
+    public function isCheckOutOpen(): bool
+    {
+        return $this->isOpen('check_out');
+    }
+
+    private function isOpen(string $type): bool
+    {
+        $flagColumn = "{$type}_open";
+        $startColumn = "{$type}_start";
+        $endColumn = "{$type}_end";
+
+        $event = $this->event;
+
+        if (!$event) {
+            return false;
+        }
+
+        // Manual availability uses the Officer-controlled flag.
+        if ($event->availability === 'manual') {
+            return (bool) $this->{$flagColumn};
+        }
+
+        // Scheduled availability only applies on the event date.
+        $currentTime = now();
+
+        if (!$event->event_date || !$event->event_date->isSameDay($currentTime)) {
+            return false;
+        }
+
+        $start = $this->{$startColumn};
+        $end = $this->{$endColumn};
+
+        if (!$start || !$end) {
+            return false;
+        }
+
+        $startTime = $currentTime->copy()->setTimeFromTimeString($start);
+        $endTime = $currentTime->copy()->setTimeFromTimeString($end);
+
+        return $currentTime->betweenIncluded($startTime, $endTime);
+    }
 }

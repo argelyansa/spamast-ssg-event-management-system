@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Student Dashboard')
@@ -11,10 +12,10 @@
 
     <section class="dashboard-grid">
 
-        <div class="content-card">
+        <a href="{{ route('student.events.index') }}" class="content-card dashboard-card">
             <h3>Upcoming Events</h3>
             <p>View upcoming SSG events and activities.</p>
-        </div>
+        </a>
 
         <div class="content-card">
             <h3>Announcements</h3>
@@ -58,6 +59,7 @@
         line-height: 1.6;
     }
 
+    .dashboard-card,
     .profile-card {
         display: block;
         text-decoration: none;
@@ -65,6 +67,7 @@
         transition: border-color 0.2s;
     }
 
+    .dashboard-card:hover,
     .profile-card:hover {
         border-color: #3B82F6;
     }
