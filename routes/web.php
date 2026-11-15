@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Officer\StudentController;
 use App\Http\Controllers\Officer\EventController;
 use App\Http\Controllers\Officer\AttendanceManagementController;
+use App\Http\Controllers\Officer\PenaltyController;
 use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\EventController as StudentEventController;
 use App\Http\Controllers\Adviser\AttendanceController as AdviserAttendanceController;
@@ -42,6 +43,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
 
+    // Shared Penalty Viewing (Officer and Adviser)
+    Route::get('/events/{event}/penalties', [PenaltyController::class, 'index'])
+        ->middleware('role:Officer,Adviser')
+        ->name('penalties.index');
     // Admin routes
     Route::prefix('admin')->name('admin.')->middleware('role:Admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])
@@ -64,6 +69,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'officer'])
             ->name('dashboard');
 
+        // Officer Penalty Management
+        Route::post('events/{event}/penalties/generate', [PenaltyController::class, 'generate'])
+            ->name('penalties.generate');
+
+        Route::put('events/{event}/penalties/{penalty}', [PenaltyController::class, 'update'])
+            ->name('penalties.update');
+
+        Route::delete('events/{event}/penalties/{penalty}', [PenaltyController::class, 'destroy'])
+            ->name('penalties.destroy');
         // Officer Student Management
         Route::resource('students', StudentController::class)
             ->except(['show']);
@@ -117,3 +131,4 @@ Route::middleware('auth')->group(function () {
             ->name('attendance.check-out');
     });
 });
+

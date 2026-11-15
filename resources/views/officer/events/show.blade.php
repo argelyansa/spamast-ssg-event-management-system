@@ -15,6 +15,10 @@
                 <i class="bi bi-arrow-left"></i> Back to Events
             </a>
 
+            <a href="{{ route('penalties.index', $event) }}" class="btn btn-outline-primary">
+                <i class="bi bi-cash-coin"></i> View Penalties
+            </a>
+
             @can('update', $event)
                 <a href="{{ route('officer.events.edit', $event) }}" class="btn btn-primary">
                     <i class="bi bi-pencil-square"></i> Edit Event
