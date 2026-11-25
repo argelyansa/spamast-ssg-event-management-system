@@ -1,13 +1,12 @@
-
 @extends('layouts.app')
 
 @section('title', 'Student Dashboard')
 
 @section('content')
 
-
     @include('components.weather')
-<section class="page-heading">
+
+    <section class="page-heading">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Student Dashboard — Event Management System</p>
     </section>
@@ -19,10 +18,11 @@
             <p>View upcoming SSG events and activities.</p>
         </a>
 
-        <div class="content-card">
+        <a href="{{ route('announcements.index') }}" class="content-card announcement-card">
             <h3>Announcements</h3>
             <p>Read the latest SSG announcements.</p>
-        </div>
+            <span class="card-link">View Announcements →</span>
+        </a>
 
         <div class="content-card">
             <h3>Attendance</h3>
@@ -62,7 +62,8 @@
     }
 
     .dashboard-card,
-    .profile-card {
+    .profile-card,
+    .announcement-card {
         display: block;
         text-decoration: none;
         color: inherit;
@@ -70,8 +71,17 @@
     }
 
     .dashboard-card:hover,
-    .profile-card:hover {
+    .profile-card:hover,
+    .announcement-card:hover {
         border-color: #3B82F6;
+    }
+
+    .card-link {
+        display: inline-block;
+        color: #2563EB;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 8px;
     }
 </style>
 @endpush

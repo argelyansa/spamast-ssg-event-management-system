@@ -1,13 +1,12 @@
-
 @extends('layouts.app')
 
 @section('title', 'Adviser Dashboard')
 
 @section('content')
 
-
     @include('components.weather')
-<section class="page-heading">
+
+    <section class="page-heading">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Adviser Dashboard — Event Management System</p>
     </section>
@@ -19,10 +18,11 @@
             <p>View SSG events and scheduled activities.</p>
         </div>
 
-        <div class="content-card">
+        <a href="{{ route('announcements.index') }}" class="content-card announcement-card">
             <h3>Announcements</h3>
             <p>Read important SSG announcements.</p>
-        </div>
+            <span class="card-link">View Announcements →</span>
+        </a>
 
         <a href="{{ route('adviser.attendance.events') }}"
            class="content-card attendance-card">
@@ -35,7 +35,6 @@
             <p>Review student fines and sanctions.</p>
         </div>
 
-        {{-- Reports --}}
         <a href="{{ route('reports.index') }}" class="content-card report-card">
             <h3>Reports</h3>
             <p>View event and attendance reports.</p>
@@ -65,7 +64,8 @@
     }
 
     .attendance-card,
-    .report-card {
+    .report-card,
+    .announcement-card {
         display: block;
         text-decoration: none;
         cursor: pointer;
@@ -77,7 +77,8 @@
     }
 
     .attendance-card:hover,
-    .report-card:hover {
+    .report-card:hover,
+    .announcement-card:hover {
         text-decoration: none;
         border-color: #3B82F6;
     }

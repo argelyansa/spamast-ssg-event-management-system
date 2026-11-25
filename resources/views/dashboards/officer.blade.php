@@ -1,13 +1,12 @@
-
 @extends('layouts.app')
 
 @section('title', 'Officer Dashboard')
 
 @section('content')
 
-
     @include('components.weather')
-<section class="page-heading mb-4">
+
+    <section class="page-heading mb-4">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Officer Dashboard — Event Management System</p>
     </section>
@@ -35,34 +34,34 @@
         </a>
 
         {{-- Attendance Monitoring --}}
-        <div class="content-card">
+        <a href="{{ route('officer.events.index') }}" class="content-card">
             <h3>
                 <i class="bi bi-clipboard-check me-2"></i>
                 Attendance Monitoring
             </h3>
             <p>Monitor student event attendance and check-ins.</p>
-            <span class="text-muted small">Coming soon</span>
-        </div>
+            <span class="card-link">Select an event to monitor attendance →</span>
+        </a>
 
         {{-- Fines and Sanctions --}}
-        <div class="content-card">
+        <a href="{{ route('officer.events.index') }}" class="content-card">
             <h3>
                 <i class="bi bi-cash-coin me-2"></i>
                 Fines and Sanctions
             </h3>
             <p>Manage attendance-related fines and sanctions.</p>
-            <span class="text-muted small">Coming soon</span>
-        </div>
+            <span class="card-link">Select an event to manage penalties →</span>
+        </a>
 
         {{-- Announcements --}}
-        <div class="content-card">
+        <a href="{{ route('announcements.index') }}" class="content-card">
             <h3>
                 <i class="bi bi-megaphone-fill me-2"></i>
                 Announcements
             </h3>
-            <p>Publish important SSG announcements.</p>
-            <span class="text-muted small">Coming soon</span>
-        </div>
+            <p>Publish and manage important SSG announcements.</p>
+            <span class="card-link">Open Announcements →</span>
+        </a>
 
         {{-- Reports --}}
         <a href="{{ route('reports.index') }}" class="content-card">

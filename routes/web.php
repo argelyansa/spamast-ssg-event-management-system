@@ -16,6 +16,7 @@ use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\EventController as StudentEventController;
 use App\Http\Controllers\Adviser\AttendanceController as AdviserAttendanceController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AnnouncementController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -71,11 +72,36 @@ Route::middleware('auth')->group(function () {
             ->except(['show']);
     });
 
+
+// Shared Announcement Viewing
+Route::middleware('role:Officer,Adviser,Student')->group(function () {
+    Route::get('/announcements', [AnnouncementController::class, 'index'])
+        ->name('announcements.index');
+
+    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
+        ->name('announcements.show');
+});
     // Officer routes
     Route::prefix('officer')->name('officer.')->middleware('role:Officer')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'officer'])
             ->name('dashboard');
 
+
+        // Officer Announcement Management
+        Route::get('announcements/create', [AnnouncementController::class, 'create'])
+            ->name('announcements.create');
+
+        Route::post('announcements', [AnnouncementController::class, 'store'])
+            ->name('announcements.store');
+
+        Route::get('announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])
+            ->name('announcements.edit');
+
+        Route::put('announcements/{announcement}', [AnnouncementController::class, 'update'])
+            ->name('announcements.update');
+
+        Route::delete('announcements/{announcement}', [AnnouncementController::class, 'destroy'])
+            ->name('announcements.destroy');
         // Officer Penalty Management
         Route::post('events/{event}/penalties/generate', [PenaltyController::class, 'generate'])
             ->name('penalties.generate');
