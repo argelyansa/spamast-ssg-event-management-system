@@ -6,7 +6,7 @@
 
     @include('components.weather')
 
-    <section class="page-heading">
+    <section class="page-heading mb-4">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Adviser Dashboard — Event Management System</p>
     </section>
@@ -41,6 +41,48 @@
             <span class="card-link">Open Reports →</span>
         </a>
 
+    </section>
+
+    {{-- Latest Announcements --}}
+    <section class="latest-announcements mt-5">
+        <div class="section-heading">
+            <div>
+                <h2>Latest Announcements</h2>
+                <p>Stay updated with the latest SSG announcements.</p>
+            </div>
+
+            <a href="{{ route('announcements.index') }}" class="view-all-link">
+                View All →
+            </a>
+        </div>
+
+        @forelse ($latestAnnouncements as $announcement)
+            <article class="announcement-card-item">
+                <h3>
+                    <a href="{{ route('announcements.show', $announcement) }}">
+                        {{ $announcement->title }}
+                    </a>
+                </h3>
+
+                <p class="announcement-meta">
+                    Posted by {{ $announcement->user->name ?? 'Unknown' }}
+                    · {{ $announcement->created_at->format('F d, Y h:i A') }}
+                </p>
+
+                <p class="announcement-body">
+                    {{ \Illuminate\Support\Str::limit($announcement->body, 120) }}
+                </p>
+
+                <a href="{{ route('announcements.show', $announcement) }}"
+                   class="read-more-link">
+                    Read Announcement →
+                </a>
+            </article>
+        @empty
+            <div class="empty-announcements">
+                <p>No announcements have been published yet.</p>
+            </div>
+        @endforelse
     </section>
 
 @endsection
@@ -89,6 +131,76 @@
         font-size: 14px;
         font-weight: 600;
         margin-top: 8px;
+    }
+
+    .latest-announcements {
+        margin-bottom: 30px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1E293B;
+        margin-bottom: 5px;
+    }
+
+    .section-heading p,
+    .announcement-meta {
+        color: #64748B;
+        font-size: 14px;
+    }
+
+    .view-all-link,
+    .read-more-link {
+        color: #2563EB;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .announcement-card-item,
+    .empty-announcements {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 14px;
+    }
+
+    .announcement-card-item h3 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .announcement-card-item h3 a {
+        color: #2563EB;
+        text-decoration: none;
+    }
+
+    .announcement-body {
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+
+    .empty-announcements p {
+        color: #64748B;
+        margin: 0;
+    }
+
+    @media (max-width: 576px) {
+        .section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
     }
 </style>
 @endpush

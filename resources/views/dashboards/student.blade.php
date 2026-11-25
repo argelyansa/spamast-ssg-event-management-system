@@ -41,6 +41,50 @@
 
     </section>
 
+    <section class="latest-announcements">
+        <div class="announcements-heading">
+            <div>
+                <h2>Latest Announcements</h2>
+                <p>Stay updated with the latest SSG announcements.</p>
+            </div>
+
+            <a href="{{ route('announcements.index') }}" class="view-all-link">
+                View All →
+            </a>
+        </div>
+
+        <div class="announcements-list">
+            @forelse ($latestAnnouncements as $announcement)
+                <article class="announcement-card-item">
+                    <h3>
+                        <a href="{{ route('announcements.show', $announcement) }}">
+                            {{ $announcement->title }}
+                        </a>
+                    </h3>
+
+                    <p class="announcement-meta">
+                        Posted by {{ $announcement->user->name ?? 'Unknown' }}
+                        ·
+                        {{ $announcement->created_at->format('F d, Y h:i A') }}
+                    </p>
+
+                    <p class="announcement-preview">
+                        {{ \Illuminate\Support\Str::limit($announcement->body, 120) }}
+                    </p>
+
+                    <a href="{{ route('announcements.show', $announcement) }}"
+                       class="read-announcement-link">
+                        Read Announcement →
+                    </a>
+                </article>
+            @empty
+                <div class="empty-announcements">
+                    <p>No announcements available yet.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
 @endsection
 
 @push('styles')
@@ -82,6 +126,79 @@
         font-size: 14px;
         font-weight: 600;
         margin-top: 8px;
+    }
+
+    .latest-announcements {
+        margin-top: 35px;
+    }
+
+    .announcements-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .announcements-heading h2 {
+        color: #1E293B;
+        margin-bottom: 6px;
+    }
+
+    .announcements-heading p {
+        color: #64748B;
+        margin: 0;
+    }
+
+    .view-all-link,
+    .read-announcement-link {
+        color: #2563EB;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .announcement-card-item {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .announcement-card-item h3 {
+        margin: 0 0 8px;
+    }
+
+    .announcement-card-item h3 a {
+        color: #2563EB;
+        text-decoration: none;
+    }
+
+    .announcement-meta {
+        color: #64748B;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .announcement-preview {
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+
+    .empty-announcements {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 20px;
+        color: #64748B;
+    }
+
+    @media (max-width: 600px) {
+        .announcements-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
     }
 </style>
 @endpush

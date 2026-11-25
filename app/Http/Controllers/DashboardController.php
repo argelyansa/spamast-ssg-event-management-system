@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
+
 class DashboardController extends Controller
 {
     public function admin()
@@ -11,16 +13,31 @@ class DashboardController extends Controller
 
     public function officer()
     {
-        return view('dashboards.officer');
+        $latestAnnouncements = Announcement::with('user')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('dashboards.officer', compact('latestAnnouncements'));
     }
 
     public function adviser()
     {
-        return view('dashboards.adviser');
+        $latestAnnouncements = Announcement::with('user')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('dashboards.adviser', compact('latestAnnouncements'));
     }
 
     public function student()
     {
-        return view('dashboards.student');
+        $latestAnnouncements = Announcement::with('user')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('dashboards.student', compact('latestAnnouncements'));
     }
 }
