@@ -29,6 +29,24 @@
                     <p>{{ $event->description }}</p>
                 @endif
 
+                @can('view-reports')
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <a
+                            href="{{ route('penalties.index', $event) }}"
+                            class="btn btn-outline-warning btn-sm"
+                        >
+                            View Penalties
+                        </a>
+
+                        <a
+                            href="{{ route('reports.show', $event) }}"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            View Report
+                        </a>
+                    </div>
+                @endcan
+
                 <h6 class="mt-3">Available Sessions</h6>
 
                 @forelse ($event->sessions as $session)

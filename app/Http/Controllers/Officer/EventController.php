@@ -14,13 +14,39 @@ use Illuminate\View\View;
 
 class EventController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $events = Event::with('creator')
-            ->latest('event_date')
-            ->paginate(10);
+        $validated = $request->validate([
+            'tab' => ['nullable', 'in:upcoming,past'],
+            'event_date' => ['nullable', 'date'],
+        ]);
 
-        return view('officer.events.index', compact('events'));
+        $activeTab = $validated['tab'] ?? 'upcoming';
+
+        $query = Event::with('creator');
+
+        if ($activeTab === 'upcoming') {
+            $query->whereDate('event_date', '>=', today());
+        } else {
+            $query->whereDate('event_date', '<', today());
+        }
+
+        if (!empty($validated['event_date'])) {
+            $query->whereDate('event_date', $validated['event_date']);
+        }
+
+        $events = $query
+            ->orderBy('event_date', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        $searchDate = $validated['event_date'] ?? '';
+
+        return view('officer.events.index', compact(
+            'events',
+            'activeTab',
+            'searchDate'
+        ));
     }
 
     public function create(): View

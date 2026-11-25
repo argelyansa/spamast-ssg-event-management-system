@@ -5,7 +5,9 @@
 
 @section('content')
 
-    <section class="page-heading">
+
+    @include('components.weather')
+<section class="page-heading">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Adviser Dashboard — Event Management System</p>
     </section>
@@ -33,10 +35,12 @@
             <p>Review student fines and sanctions.</p>
         </div>
 
-        <div class="content-card">
+        {{-- Reports --}}
+        <a href="{{ route('reports.index') }}" class="content-card report-card">
             <h3>Reports</h3>
             <p>View event and attendance reports.</p>
-        </div>
+            <span class="card-link">Open Reports →</span>
+        </a>
 
     </section>
 
@@ -60,14 +64,30 @@
         line-height: 1.6;
     }
 
-    .attendance-card {
+    .attendance-card,
+    .report-card {
         display: block;
         text-decoration: none;
         cursor: pointer;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 25px;
+        color: inherit;
     }
 
-    .attendance-card:hover {
+    .attendance-card:hover,
+    .report-card:hover {
         text-decoration: none;
+        border-color: #3B82F6;
+    }
+
+    .card-link {
+        display: inline-block;
+        color: #2563EB;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 8px;
     }
 </style>
 @endpush

@@ -15,6 +15,7 @@ use App\Http\Controllers\Officer\PenaltyController;
 use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\EventController as StudentEventController;
 use App\Http\Controllers\Adviser\AttendanceController as AdviserAttendanceController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -47,6 +48,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/events/{event}/penalties', [PenaltyController::class, 'index'])
         ->middleware('role:Officer,Adviser')
         ->name('penalties.index');
+    // Event Reports (Officer and Adviser)
+    Route::middleware('role:Officer,Adviser')->group(function () {
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/{event}', [ReportController::class, 'show'])->name('reports.show');
+    });
+
     // Admin routes
     Route::prefix('admin')->name('admin.')->middleware('role:Admin')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])
@@ -131,4 +138,3 @@ Route::middleware('auth')->group(function () {
             ->name('attendance.check-out');
     });
 });
-

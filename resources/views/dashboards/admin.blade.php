@@ -3,6 +3,8 @@
 @section('title', 'Admin Dashboard')
 
 @section('content')
+
+    @include('components.weather')
 <div class="dashboard-header">
     <h1>Admin Dashboard</h1>
     <p>Welcome to the SPAMAST SSG Event Management System.</p>

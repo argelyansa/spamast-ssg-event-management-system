@@ -5,7 +5,9 @@
 
 @section('content')
 
-    <section class="page-heading mb-4">
+
+    @include('components.weather')
+<section class="page-heading mb-4">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Officer Dashboard — Event Management System</p>
     </section>
@@ -63,14 +65,14 @@
         </div>
 
         {{-- Reports --}}
-        <div class="content-card">
+        <a href="{{ route('reports.index') }}" class="content-card">
             <h3>
                 <i class="bi bi-file-earmark-bar-graph me-2"></i>
                 Reports
             </h3>
             <p>View event and attendance reports.</p>
-            <span class="text-muted small">Coming soon</span>
-        </div>
+            <span class="card-link">Open Reports →</span>
+        </a>
 
     </section>
 

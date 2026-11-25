@@ -5,7 +5,9 @@
 
 @section('content')
 
-    <section class="page-heading">
+
+    @include('components.weather')
+<section class="page-heading">
         <h1>Welcome, {{ auth()->user()->name }}!</h1>
         <p>Student Dashboard — Event Management System</p>
     </section>
