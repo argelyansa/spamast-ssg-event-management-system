@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +7,7 @@
 
     <title>@yield('title', 'Dashboard') | SPAMAST SSG</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <style>
@@ -75,6 +71,30 @@
             color: #93C5FD;
         }
 
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #93C5FD;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--blue);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            overflow: hidden;
+        }
+
         .logout-button {
             background: var(--blue);
             color: white;
@@ -108,7 +128,6 @@
             font-size: 13px;
         }
 
-        /* Form styling */
         .card {
             border-radius: 14px !important;
         }
@@ -163,7 +182,21 @@
 
         @auth
             <nav class="header-actions">
-                <span>{{ auth()->user()->name }}</span>
+                <span class="header-user">
+                    @if (auth()->user()->photo && \Illuminate\Support\Facades\Storage::disk('public')->exists(auth()->user()->photo))
+                        <img
+                            src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url(auth()->user()->photo) }}"
+                            alt="Profile photo"
+                            class="header-avatar"
+                        >
+                    @else
+                        <span class="header-avatar">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </span>
+                    @endif
+
+                    {{ auth()->user()->name }}
+                </span>
 
                 <a href="{{ route('profile.edit') }}">My Profile</a>
 
@@ -200,7 +233,6 @@
         &copy; {{ date('Y') }}
     </footer>
 
-    <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')
