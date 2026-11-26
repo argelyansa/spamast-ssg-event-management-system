@@ -11,6 +11,7 @@ use App\Models\Student;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class PenaltyController extends Controller
@@ -65,6 +66,28 @@ class PenaltyController extends Controller
 
         $totalAmount = Penalty::where('event_id', $event->id)
             ->sum('amount');
+        $programSummary = Penalty::with('student.program')
+            ->where('event_id', $event->id)
+            ->get()
+            ->groupBy(function ($penalty) {
+                return $penalty->student?->program_id ?? 'unassigned';
+            })
+            ->map(function (Collection $programPenalties) {
+                $program = $programPenalties->first()?->student?->program;
+
+                return [
+                    'program_name' => $program?->name ?? 'Unassigned',
+                    'student_count' => $programPenalties
+                        ->pluck('student_id')
+                        ->unique()
+                        ->count(),
+                    'total_amount' => $programPenalties->sum(
+                        fn ($penalty) => (float) $penalty->amount
+                    ),
+                ];
+            })
+            ->sortByDesc('total_amount')
+            ->values();
 
         return view('penalties.index', compact(
             'event',
@@ -72,7 +95,8 @@ class PenaltyController extends Controller
             'institutes',
             'programs',
             'totalPenalties',
-            'totalAmount'
+            'totalAmount',
+            'programSummary'
         ));
     }
 

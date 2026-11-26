@@ -102,6 +102,56 @@
     </div>
 
     <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold mb-0" style="color: #111C32;">
+                Penalty Summary by Program
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            @if ($programSummary->isNotEmpty())
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">Program</th>
+                                <th class="text-center">Students with Penalties</th>
+                                <th class="text-end pe-3">Total Penalty Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($programSummary as $summary)
+                                <tr>
+                                    <td class="ps-3 fw-semibold">
+                                        {{ $summary['program_name'] }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ $summary['student_count'] }}
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        ₱{{ number_format($summary['total_amount'], 2) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <th colspan="2" class="ps-3">Grand Total</th>
+                                <th class="text-end pe-3">
+                                    ₱{{ number_format($programSummary->sum('total_amount'), 2) }}
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            @else
+                <p class="text-muted text-center mb-0 py-4">
+                    No penalty summary is available for this event yet.
+                </p>
+            @endif
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('penalties.index', $event) }}">
                 <div class="row g-3">
