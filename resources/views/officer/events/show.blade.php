@@ -61,16 +61,16 @@
                 <div class="col-md-6">
                     <small class="text-muted d-block mb-1">Day Type</small>
                     <span class="badge bg-primary">
-                        {{ $event->day_type === 'whole_day' ? 'Whole Day' : 'Half Day' }}
+                        {{ Illuminate\Support\Str::headline($event->day_type) }}
                     </span>
                 </div>
 
                 <div class="col-md-6">
                     <small class="text-muted d-block mb-1">Availability</small>
                     @if($event->availability === 'scheduled')
-                        <span class="badge bg-info text-dark">Scheduled</span>
+                        <span class="badge bg-info text-dark">{{ Illuminate\Support\Str::headline($event->availability) }}</span>
                     @else
-                        <span class="badge bg-warning text-dark">Manual</span>
+                        <span class="badge bg-warning text-dark">{{ Illuminate\Support\Str::headline($event->availability) }}</span>
                     @endif
                 </div>
 
@@ -117,7 +117,7 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <h5 class="mb-0 fw-bold" style="color: #111C32;">
                         <i class="bi bi-clock-history me-2 text-primary"></i>
-                        {{ ucfirst(str_replace('_', ' ', $session->period)) }}
+                        {{ Illuminate\Support\Str::headline($session->period) }}
                     </h5>
 
                     <span class="badge bg-secondary">

@@ -78,9 +78,7 @@
                             </div>
 
                             <span class="event-type">
-                                {{ $event->day_type === 'whole_day'
-                                    ? 'WHOLE DAY'
-                                    : 'HALF DAY' }}
+                                {{ strtoupper(Illuminate\Support\Str::headline($event->day_type)) }}
                             </span>
                         </div>
 

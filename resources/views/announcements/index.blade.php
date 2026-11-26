@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <p>{{ \Illuminate\Support\Str::limit($announcement->body, 180) }}</p>
+                <p>{{ \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
 
                 @if($announcement->attachment)
                     <p class="small">

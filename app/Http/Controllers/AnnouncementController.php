@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AnnouncementController extends Controller
 {
@@ -45,8 +46,9 @@ class AnnouncementController extends Controller
         $validated['user_id'] = auth()->id();
 
         if ($request->hasFile('attachment')) {
-            $validated['attachment'] = $request->file('attachment')
-                ->store('announcements', 'public');
+            $validated['attachment'] = $this->storeAttachment(
+                $request->file('attachment')
+            );
         }
 
         Announcement::create($validated);
@@ -74,16 +76,22 @@ class AnnouncementController extends Controller
             ],
         ]);
 
-        if ($request->hasFile('attachment')) {
-            if ($announcement->attachment) {
-                Storage::disk('public')->delete($announcement->attachment);
-            }
+        $oldAttachment = $announcement->attachment;
 
-            $validated['attachment'] = $request->file('attachment')
-                ->store('announcements', 'public');
+        if ($request->hasFile('attachment')) {
+            $validated['attachment'] = $this->storeAttachment(
+                $request->file('attachment')
+            );
         }
 
         $announcement->update($validated);
+
+        if (
+            $request->hasFile('attachment') &&
+            $oldAttachment
+        ) {
+            Storage::disk('public')->delete($oldAttachment);
+        }
 
         return redirect()
             ->route('announcements.index')
@@ -101,5 +109,19 @@ class AnnouncementController extends Controller
         return redirect()
             ->route('announcements.index')
             ->with('success', 'Announcement deleted successfully.');
+    }
+
+    private function storeAttachment($file): string
+    {
+        $originalName = pathinfo(
+            $file->getClientOriginalName(),
+            PATHINFO_FILENAME
+        );
+
+        $slug = Str::slug($originalName) ?: 'attachment';
+
+        $filename = $slug . '-' . Str::uuid() . '.' . $file->extension();
+
+        return $file->storeAs('announcements', $filename, 'public');
     }
 }

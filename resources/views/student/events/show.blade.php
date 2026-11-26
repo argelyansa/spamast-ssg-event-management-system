@@ -44,7 +44,7 @@
             </div>
 
             <span class="event-type-badge">
-                {{ $event->day_type === 'whole_day' ? 'WHOLE DAY' : 'HALF DAY' }}
+                {{ strtoupper(Illuminate\Support\Str::headline($event->day_type)) }}
             </span>
         </div>
 
@@ -113,7 +113,7 @@
                             <div>
                                 <span class="session-label">ATTENDANCE SESSION</span>
                                 <h3>
-                                    {{ ucfirst(str_replace('_', ' ', $session->period)) }}
+                                    {{ Illuminate\Support\Str::headline($session->period) }}
                                     Session
                                 </h3>
                             </div>

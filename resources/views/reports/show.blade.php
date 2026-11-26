@@ -151,7 +151,7 @@
 
             <div class="col-md-4">
                 <span class="text-muted">Day Type</span>
-                <div class="fw-semibold">{{ ucfirst($event->day_type) }}</div>
+                <div class="fw-semibold">{{ Illuminate\Support\Str::headline($event->day_type) }}</div>
             </div>
         </div>
     </div>
@@ -322,7 +322,7 @@
                                         <span class="badge
                                             {{ $student->status === 'paid' ? 'bg-success' :
                                                 ($student->status === 'served' ? 'bg-info text-dark' : 'bg-warning text-dark') }}">
-                                            {{ ucfirst($student->status) }}
+                                            {{ Illuminate\Support\Str::headline($student->status) }}
                                         </span>
                                     @else
                                         <span class="text-muted">None</span>

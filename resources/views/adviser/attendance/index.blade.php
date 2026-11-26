@@ -20,7 +20,7 @@
         <div class="card-body">
             <h4>{{ $event->title }}</h4>
             <p class="mb-1">
-                <strong>Session:</strong> {{ $session->period }}
+                <strong>Session:</strong> {{ Illuminate\Support\Str::headline($session->period) }}
             </p>
             <p class="mb-0">
                 <strong>Event Date:</strong>

@@ -26,7 +26,7 @@
              style="background-color: #111C32;">
             <h5 class="mb-1 fw-semibold">{{ $event->title }}</h5>
             <small>
-                {{ ucfirst(str_replace('_', ' ', $session->period)) }} Session
+                {{ Illuminate\Support\Str::headline($session->period) }} Session
                 · {{ $event->event_date->format('F d, Y') }}
             </small>
         </div>

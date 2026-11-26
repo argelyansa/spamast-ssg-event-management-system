@@ -52,7 +52,7 @@
                 @forelse ($event->sessions as $session)
                     <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2">
                         <div>
-                            <strong>{{ $session->period }}</strong>
+                            <strong>{{ Illuminate\Support\Str::headline($session->period) }}</strong>
                         </div>
 
                         <a

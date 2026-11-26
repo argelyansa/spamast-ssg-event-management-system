@@ -140,14 +140,14 @@
                                     </td>
 
                                     <td>
-                                        {{ $event->day_type === 'whole_day' ? 'Whole Day' : 'Half Day' }}
+                                        {{ Illuminate\Support\Str::headline($event->day_type) }}
                                     </td>
 
                                     <td>
                                         @if($event->availability === 'scheduled')
-                                            <span class="badge bg-success">Scheduled</span>
+                                            <span class="badge bg-success">{{ Illuminate\Support\Str::headline($event->availability) }}</span>
                                         @else
-                                            <span class="badge bg-warning text-dark">Manual</span>
+                                            <span class="badge bg-warning text-dark">{{ Illuminate\Support\Str::headline($event->availability) }}</span>
                                         @endif
                                     </td>
 
