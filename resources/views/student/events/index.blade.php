@@ -1,7 +1,6 @@
-
 @extends('layouts.app')
 
-@section('title', 'Upcoming Events')
+@section('title', $tab === 'past' ? 'Past Events' : 'Upcoming Events')
 
 @section('content')
 
@@ -10,10 +9,11 @@
     <section class="events-hero">
         <div class="hero-content">
             <span class="hero-label">SPAMAST SSG STUDENT PORTAL</span>
-            <h1>Discover Upcoming Events</h1>
+            <h1>{{ $tab === 'past' ? 'Past Events' : 'Discover Upcoming Events' }}</h1>
             <p>
-                Stay informed, explore upcoming activities, and never miss
-                an opportunity to participate in SPAMAST SSG events.
+                {{ $tab === 'past'
+                    ? 'Look back at activities and events conducted by the SPAMAST SSG.'
+                    : 'Stay informed, explore upcoming activities, and never miss an opportunity to participate in SPAMAST SSG events.' }}
             </p>
         </div>
 
@@ -33,7 +33,7 @@
         <div class="section-heading">
             <div>
                 <span class="section-label">EVENT CALENDAR</span>
-                <h2>Available Events</h2>
+                <h2>{{ $tab === 'past' ? 'Past Events' : 'Available Events' }}</h2>
                 <p>Explore activities prepared for the SPAMAST community.</p>
             </div>
 
@@ -45,14 +45,56 @@
             </div>
         </div>
 
+        <div class="event-tabs">
+            <a
+                href="{{ request()->fullUrlWithQuery(['tab' => 'upcoming', 'page' => null]) }}"
+                class="{{ $tab === 'upcoming' ? 'active' : '' }}"
+            >
+                Upcoming Events
+            </a>
+
+            <a
+                href="{{ request()->fullUrlWithQuery(['tab' => 'past', 'page' => null]) }}"
+                class="{{ $tab === 'past' ? 'active' : '' }}"
+            >
+                Past Events
+            </a>
+        </div>
+
+        <form method="GET" action="{{ request()->url() }}" class="event-date-search">
+            <input type="hidden" name="tab" value="{{ $tab }}">
+
+            <label for="event-date">Search by event date</label>
+
+            <input
+                type="date"
+                id="event-date"
+                name="date"
+                value="{{ $date }}"
+            >
+
+            <button type="submit">Search</button>
+
+            @if ($date)
+                <a href="{{ request()->url() }}?tab={{ $tab }}">Clear</a>
+            @endif
+        </form>
+
         @if ($events->isEmpty())
 
             <div class="empty-events">
                 <div class="empty-icon">✦</div>
-                <h3>No Upcoming Events</h3>
+                <h3>
+                    {{ $date
+                        ? 'No Events Found'
+                        : ($tab === 'past' ? 'No Past Events' : 'No Upcoming Events') }}
+                </h3>
                 <p>
-                    There are currently no upcoming SSG events.
-                    Please check again later for new activities.
+                    {{ $date
+                        ? 'No events were found for the selected date in this tab.'
+                        : ($tab === 'past'
+                            ? 'There are currently no past SSG events to display.'
+                            : 'There are currently no upcoming SSG events. Please check again later for new activities.') }}
                 </p>
             </div>
 
@@ -100,7 +142,7 @@
                             <div class="event-card-footer">
                                 <span class="event-status">
                                     <span class="status-dot"></span>
-                                    Upcoming Event
+                                    {{ $tab === 'past' ? 'Past Event' : 'Upcoming Event' }}
                                 </span>
 
                                 <a
@@ -131,7 +173,6 @@
 </div>
 
 @endsection
-
 @push('styles')
 <style>
     .student-events-page {
@@ -467,6 +508,91 @@
         margin-top: 25px;
     }
 
+    /* Upcoming and Past Event Tabs */
+
+    .event-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 25px 0 20px;
+        border-bottom: 1px solid #E2E8F0;
+        padding-bottom: 12px;
+    }
+
+    .event-tabs a {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 10px;
+        color: #475569;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .event-tabs a:hover {
+        background: #F1F5F9;
+        color: #0F172A;
+    }
+
+    .event-tabs a.active {
+        background: #0F766E;
+        color: #FFFFFF;
+    }
+
+    /* Event Date Search */
+
+    .event-date-search {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+    }
+
+    .event-date-search label {
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .event-date-search input[type="date"] {
+        padding: 9px 12px;
+        border: 1px solid #CBD5E1;
+        border-radius: 8px;
+        color: #334155;
+        font: inherit;
+    }
+
+    .event-date-search button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #0F766E;
+        color: #FFFFFF;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .event-date-search button:hover {
+        background: #115E59;
+    }
+
+    .event-date-search a {
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .event-date-search a:hover {
+        color: #0F766E;
+        text-decoration: underline;
+    }
     /* Responsive layout */
 
     @media (max-width: 800px) {
