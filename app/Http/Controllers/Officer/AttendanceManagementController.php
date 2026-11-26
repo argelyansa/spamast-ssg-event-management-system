@@ -9,7 +9,9 @@ use App\Models\EventSession;
 use App\Models\Institute;
 use App\Models\Program;
 use App\Models\Student;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AttendanceManagementController extends Controller
@@ -19,11 +21,7 @@ class AttendanceManagementController extends Controller
         Event $event,
         EventSession $session
     ): View {
-        // Make sure the selected session belongs to this event.
-        abort_unless(
-            (int) $session->event_id === (int) $event->id,
-            404
-        );
+        $this->ensureSessionBelongsToEvent($event, $session);
 
         $students = Student::query()
             ->with([
@@ -62,7 +60,6 @@ class AttendanceManagementController extends Controller
         $institutes = Institute::orderBy('name')->get();
         $programs = Program::orderBy('name')->get();
 
-        // Session-wide attendance totals.
         $totalStudents = Student::count();
 
         $checkedInCount = Attendance::query()
@@ -75,10 +72,7 @@ class AttendanceManagementController extends Controller
             ->whereNotNull('check_out_at')
             ->count();
 
-        $notCheckedInCount = max(
-            0,
-            $totalStudents - $checkedInCount
-        );
+        $notCheckedInCount = max(0, $totalStudents - $checkedInCount);
 
         return view('officer.attendance.index', compact(
             'event',
@@ -91,5 +85,107 @@ class AttendanceManagementController extends Controller
             'checkedOutCount',
             'notCheckedInCount'
         ));
+    }
+
+    public function store(
+        Request $request,
+        Event $event,
+        EventSession $session
+    ): RedirectResponse {
+        $this->ensureSessionBelongsToEvent($event, $session);
+
+        $data = $request->validate([
+            'student_id' => [
+                'required',
+                'integer',
+                'exists:students,id',
+                Rule::unique('attendances', 'student_id')
+                    ->where(fn ($query) => $query->where(
+                        'event_session_id',
+                        $session->id
+                    )),
+            ],
+            'check_in_at' => [
+                'nullable',
+                'date',
+                'required_with:check_out_at',
+            ],
+            'check_out_at' => [
+                'nullable',
+                'date',
+                'after:check_in_at',
+            ],
+        ]);
+
+        $session->attendances()->create([
+            'student_id' => $data['student_id'],
+            'check_in_at' => $data['check_in_at'] ?? null,
+            'check_out_at' => $data['check_out_at'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('officer.attendance.index', [$event, $session])
+            ->with('success', 'Attendance record added successfully.');
+    }
+
+    public function update(
+        Request $request,
+        Event $event,
+        EventSession $session,
+        Attendance $attendance
+    ): RedirectResponse {
+        $this->ensureSessionBelongsToEvent($event, $session);
+
+        $attendance = $session->attendances()
+            ->findOrFail($attendance->id);
+
+        $data = $request->validate([
+            'check_in_at' => [
+                'nullable',
+                'date',
+                'required_with:check_out_at',
+            ],
+            'check_out_at' => [
+                'nullable',
+                'date',
+                'after:check_in_at',
+            ],
+        ]);
+
+        $attendance->update([
+            'check_in_at' => $data['check_in_at'] ?? null,
+            'check_out_at' => $data['check_out_at'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('officer.attendance.index', [$event, $session])
+            ->with('success', 'Attendance record updated successfully.');
+    }
+
+    public function destroy(
+        Event $event,
+        EventSession $session,
+        Attendance $attendance
+    ): RedirectResponse {
+        $this->ensureSessionBelongsToEvent($event, $session);
+
+        $attendance = $session->attendances()
+            ->findOrFail($attendance->id);
+
+        $attendance->delete();
+
+        return redirect()
+            ->route('officer.attendance.index', [$event, $session])
+            ->with('success', 'Attendance record deleted successfully.');
+    }
+
+    private function ensureSessionBelongsToEvent(
+        Event $event,
+        EventSession $session
+    ): void {
+        abort_unless(
+            (int) $session->event_id === (int) $event->id,
+            404
+        );
     }
 }

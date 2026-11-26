@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('content')
@@ -10,7 +9,7 @@
                 Attendance Management
             </h2>
             <p class="text-muted mb-0">
-                View attendance records for all registered students.
+                View and manage attendance records for registered students.
             </p>
         </div>
 
@@ -20,6 +19,17 @@
             Back to Event
         </a>
     </div>
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <strong>Please correct the following:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header text-white py-3"
@@ -115,7 +125,6 @@
                         <select name="program_id"
                                 id="program_id"
                                 class="form-select">
-
                             <option value="">All Programs</option>
 
                             @foreach($programs as $program)
@@ -127,7 +136,6 @@
                                     {{ $program->name }}
                                 </option>
                             @endforeach
-
                         </select>
                     </div>
 
@@ -153,6 +161,11 @@
             <h5 class="fw-bold mb-0" style="color: #111C32;">
                 Student Attendance List
             </h5>
+            @can('manage-ssg')
+                <small class="text-muted">
+                    You can add, correct, or remove attendance records below.
+                </small>
+            @endcan
         </div>
 
         <div class="card-body p-0">
@@ -167,6 +180,9 @@
                             <th>Institute</th>
                             <th>Check-in</th>
                             <th>Check-out</th>
+                            @can('manage-ssg')
+                                <th style="min-width: 280px;">Actions</th>
+                            @endcan
                         </tr>
                     </thead>
 
@@ -224,11 +240,99 @@
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
+
+                                @can('manage-ssg')
+                                    <td>
+                                        @if($attendance)
+                                            <form method="POST"
+                                                  action="{{ route('officer.attendance.update', [$event, $session, $attendance]) }}"
+                                                  class="border rounded p-2 mb-2">
+                                                @csrf
+                                                @method('PUT')
+
+                                                <label class="form-label small fw-semibold mb-1">
+                                                    Check-in time
+                                                </label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="check_in_at"
+                                                    class="form-control form-control-sm mb-2"
+                                                    value="{{ $attendance->check_in_at?->format('Y-m-d\TH:i') }}"
+                                                >
+
+                                                <label class="form-label small fw-semibold mb-1">
+                                                    Check-out time
+                                                </label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="check_out_at"
+                                                    class="form-control form-control-sm mb-2"
+                                                    value="{{ $attendance->check_out_at?->format('Y-m-d\TH:i') }}"
+                                                >
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-primary w-100">
+                                                    <i class="bi bi-save me-1"></i>
+                                                    Save Changes
+                                                </button>
+                                            </form>
+
+                                            <form method="POST"
+                                                  action="{{ route('officer.attendance.destroy', [$event, $session, $attendance]) }}"
+                                                  onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger w-100">
+                                                    <i class="bi bi-trash me-1"></i>
+                                                    Delete Record
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form method="POST"
+                                                  action="{{ route('officer.attendance.store', [$event, $session]) }}"
+                                                  class="border rounded p-2">
+                                                @csrf
+
+                                                <input type="hidden"
+                                                       name="student_id"
+                                                       value="{{ $student->id }}">
+
+                                                <label class="form-label small fw-semibold mb-1">
+                                                    Check-in time (optional)
+                                                </label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="check_in_at"
+                                                    class="form-control form-control-sm mb-2"
+                                                >
+
+                                                <label class="form-label small fw-semibold mb-1">
+                                                    Check-out time (optional)
+                                                </label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="check_out_at"
+                                                    class="form-control form-control-sm mb-2"
+                                                >
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-success w-100">
+                                                    <i class="bi bi-plus-circle me-1"></i>
+                                                    Add Attendance Record
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                @endcan
                             </tr>
 
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4 text-muted">
+                                <td
+                                    colspan="@can('manage-ssg') 8 @else 7 @endcan"
+                                    class="text-center py-4 text-muted">
                                     No students match your search or filters.
                                 </td>
                             </tr>

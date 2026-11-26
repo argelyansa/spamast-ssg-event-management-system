@@ -125,6 +125,21 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
             [AttendanceManagementController::class, 'index']
         )->name('attendance.index');
 
+        Route::post(
+            'events/{event}/sessions/{session}/attendance',
+            [AttendanceManagementController::class, 'store']
+        )->name('attendance.store');
+
+        Route::put(
+            'events/{event}/sessions/{session}/attendance/{attendance}',
+            [AttendanceManagementController::class, 'update']
+        )->name('attendance.update');
+
+        Route::delete(
+            'events/{event}/sessions/{session}/attendance/{attendance}',
+            [AttendanceManagementController::class, 'destroy']
+        )->name('attendance.destroy');
+
         // Officer Event Management
         Route::resource('events', EventController::class);
     });
