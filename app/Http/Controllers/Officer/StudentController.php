@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Program;
 use App\Models\Institute;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -94,6 +95,8 @@ class StudentController extends Controller
             );
         });
 
+        DashboardStatsCache::forgetOfficer();
+
         return redirect()
             ->route('officer.students.index')
             ->with('success', 'Student created successfully.');
@@ -159,6 +162,9 @@ class StudentController extends Controller
         DB::transaction(function () use ($student) {
             $student->user()->delete();
         });
+
+        DashboardStatsCache::forgetOfficer();
+        DashboardStatsCache::forgetStudent((int) $student->user_id);
 
         return redirect()
             ->route('officer.students.index')

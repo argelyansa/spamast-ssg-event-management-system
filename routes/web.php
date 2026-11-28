@@ -14,15 +14,16 @@ use App\Http\Controllers\Officer\EventController;
 use App\Http\Controllers\Officer\AttendanceManagementController;
 use App\Http\Controllers\Officer\PenaltyController;
 use App\Http\Controllers\Student\AttendanceController;
+use App\Http\Controllers\Student\PenaltyController as StudentPenaltyController;
 use App\Http\Controllers\Student\EventController as StudentEventController;
 use App\Http\Controllers\Adviser\AttendanceController as AdviserAttendanceController;
 use App\Http\Controllers\Adviser\EventController as AdviserEventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\PublicHomeController;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [PublicHomeController::class, 'index'])
+    ->name('home');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])
@@ -55,16 +56,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/events/{event}/penalties', [PenaltyController::class, 'index'])
         ->middleware('role:Officer,Adviser')
         ->name('penalties.index');
+
     // Event Reports (Officer and Adviser)
     Route::middleware('role:Officer,Adviser')->group(function () {
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('/reports/{event}', [ReportController::class, 'show'])->name('reports.show');
+        Route::get('/reports', [ReportController::class, 'index'])
+            ->name('reports.index');
+
+        Route::get('/reports/{event}', [ReportController::class, 'show'])
+            ->name('reports.show');
     });
 
     // Admin routes
-    Route::prefix('admin')->name('admin.')->middleware('role:Admin')->group(function () {
+    Route::prefix('admin')->name('admin.')
+        ->middleware('role:Admin')->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'admin'])
             ->name('dashboard');
+
+        // Admin System Overview
+        Route::get('/system-overview', [
+            \App\Http\Controllers\Admin\SystemOverviewController::class,
+            'index'
+        ])->name('system-overview');
+
+        // Admin Event Management
+        Route::get('/events', [
+            \App\Http\Controllers\Admin\EventController::class,
+            'index'
+        ])->name('events.index');
 
         // Admin User Management
         Route::resource('users', UserController::class);
@@ -78,20 +97,21 @@ Route::middleware('auth')->group(function () {
             ->except(['show']);
     });
 
+    // Shared Announcement Viewing
+    Route::middleware('role:Officer,Adviser,Student')->group(function () {
+        Route::get('/announcements', [AnnouncementController::class, 'index'])
+            ->name('announcements.index');
 
-// Shared Announcement Viewing
-Route::middleware('role:Officer,Adviser,Student')->group(function () {
-    Route::get('/announcements', [AnnouncementController::class, 'index'])
-        ->name('announcements.index');
+        Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
+            ->name('announcements.show');
+    });
 
-    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show'])
-        ->name('announcements.show');
-});
     // Officer routes
-    Route::prefix('officer')->name('officer.')->middleware('role:Officer')->group(function () {
+    Route::prefix('officer')->name('officer.')
+        ->middleware('role:Officer')->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'officer'])
             ->name('dashboard');
-
 
         // Officer Announcement Management
         Route::get('announcements/create', [AnnouncementController::class, 'create'])
@@ -108,6 +128,7 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
 
         Route::delete('announcements/{announcement}', [AnnouncementController::class, 'destroy'])
             ->name('announcements.destroy');
+
         // Officer Penalty Management
         Route::post('events/{event}/penalties/generate', [PenaltyController::class, 'generate'])
             ->name('penalties.generate');
@@ -117,6 +138,7 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
 
         Route::delete('events/{event}/penalties/{penalty}', [PenaltyController::class, 'destroy'])
             ->name('penalties.destroy');
+
         // Officer Student Management
         Route::resource('students', StudentController::class)
             ->except(['show']);
@@ -124,6 +146,12 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
         // Officer Session Availability
         Route::patch('sessions/{session}/toggle', [EventController::class, 'toggleSession'])
             ->name('sessions.toggle');
+
+        // Officer Attendance Event Selection
+        Route::get('attendance/events', [
+            AttendanceManagementController::class,
+            'events'
+        ])->name('attendance.events');
 
         // Officer Attendance Management
         Route::get(
@@ -146,12 +174,18 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
             [AttendanceManagementController::class, 'destroy']
         )->name('attendance.destroy');
 
+        // Officer Fines and Sanctions Event Selection
+        Route::get('penalties/events', [EventController::class, 'penaltiesEvents'])
+            ->name('penalties.events');
+
         // Officer Event Management
         Route::resource('events', EventController::class);
     });
 
     // Adviser routes
-    Route::prefix('adviser')->name('adviser.')->middleware('role:Adviser')->group(function () {
+    Route::prefix('adviser')->name('adviser.')
+        ->middleware('role:Adviser')->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'adviser'])
             ->name('dashboard');
 
@@ -174,7 +208,9 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
     });
 
     // Student routes
-    Route::prefix('student')->name('student.')->middleware('role:Student')->group(function () {
+    Route::prefix('student')->name('student.')
+        ->middleware('role:Student')->group(function () {
+
         Route::get('/dashboard', [DashboardController::class, 'student'])
             ->name('dashboard');
 
@@ -184,6 +220,14 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
 
         Route::get('/events/{event}', [StudentEventController::class, 'show'])
             ->name('events.show');
+
+        // Student Fines and Sanctions
+        Route::get('/penalties', [StudentPenaltyController::class, 'index'])
+            ->name('penalties.index');
+
+        // Student Attendance History
+        Route::get('/attendance', [AttendanceController::class, 'index'])
+            ->name('attendance.index');
 
         // Student Attendance
         Route::post('sessions/{session}/check-in', [AttendanceController::class, 'checkIn'])

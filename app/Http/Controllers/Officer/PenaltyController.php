@@ -8,6 +8,7 @@ use App\Models\Institute;
 use App\Models\Penalty;
 use App\Models\Program;
 use App\Models\Student;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -156,6 +157,8 @@ class PenaltyController extends Controller
                 });
         });
 
+        DashboardStatsCache::forgetPenaltyStats();
+
         return redirect()
             ->route('penalties.index', $event)
             ->with('success', 'Penalties generated successfully.');
@@ -176,6 +179,8 @@ class PenaltyController extends Controller
 
         $penalty->update($validated);
 
+        DashboardStatsCache::forgetPenaltyStats();
+
         return redirect()
             ->route('penalties.index', $event)
             ->with('success', 'Penalty updated successfully.');
@@ -186,6 +191,8 @@ class PenaltyController extends Controller
         abort_unless((int) $penalty->event_id === (int) $event->id, 404);
 
         $penalty->delete();
+
+        DashboardStatsCache::forgetPenaltyStats();
 
         return redirect()
             ->route('penalties.index', $event)

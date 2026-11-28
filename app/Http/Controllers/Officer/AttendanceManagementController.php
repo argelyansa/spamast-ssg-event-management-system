@@ -9,6 +9,7 @@ use App\Models\EventSession;
 use App\Models\Institute;
 use App\Models\Program;
 use App\Models\Student;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,6 +17,14 @@ use Illuminate\View\View;
 
 class AttendanceManagementController extends Controller
 {
+    public function events(): View
+    {
+        $events = Event::with('sessions')
+            ->latest('event_date')
+            ->paginate(10);
+
+        return view('officer.attendance.events', compact('events'));
+    }
     public function index(
         Request $request,
         Event $event,
@@ -123,6 +132,9 @@ class AttendanceManagementController extends Controller
             'check_out_at' => $data['check_out_at'] ?? null,
         ]);
 
+        DashboardStatsCache::forgetAttendanceStats(
+            (int) Student::whereKey($data['student_id'])->value('user_id')
+        );
         return redirect()
             ->route('officer.attendance.index', [$event, $session])
             ->with('success', 'Attendance record added successfully.');
@@ -157,6 +169,9 @@ class AttendanceManagementController extends Controller
             'check_out_at' => $data['check_out_at'] ?? null,
         ]);
 
+        DashboardStatsCache::forgetAttendanceStats(
+            (int) Student::whereKey($attendance->student_id)->value('user_id')
+        );
         return redirect()
             ->route('officer.attendance.index', [$event, $session])
             ->with('success', 'Attendance record updated successfully.');
@@ -174,6 +189,9 @@ class AttendanceManagementController extends Controller
 
         $attendance->delete();
 
+        DashboardStatsCache::forgetAttendanceStats(
+            (int) Student::whereKey($attendance->student_id)->value('user_id')
+        );
         return redirect()
             ->route('officer.attendance.index', [$event, $session])
             ->with('success', 'Attendance record deleted successfully.');

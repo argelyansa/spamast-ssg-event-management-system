@@ -5,11 +5,28 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\EventSession;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class AttendanceController extends Controller
 {
+
+    public function index(Request $request): View
+    {
+        $student = $request->user()->student;
+
+        abort_unless($student, 403, 'Your account is not linked to a student record.');
+
+        $attendances = Attendance::query()
+            ->with(['eventSession.event'])
+            ->where('student_id', $student->id)
+            ->orderByDesc('check_in_at')
+            ->paginate(15);
+
+        return view('student.attendance.index', compact('attendances'));
+    }
     public function checkIn(Request $request, EventSession $session): RedirectResponse
     {
         $student = $request->user()->student;
@@ -37,6 +54,8 @@ class AttendanceController extends Controller
             ]);
         }
 
+        DashboardStatsCache::forgetAttendanceStats((int) $student->user_id);
+
         return back()->with('success', 'Check-in recorded successfully.');
     }
 
@@ -57,6 +76,8 @@ class AttendanceController extends Controller
         $attendance->update([
             'check_out_at' => now(),
         ]);
+
+        DashboardStatsCache::forgetAttendanceStats((int) $student->user_id);
 
         return back()->with('success', 'Check-out recorded successfully.');
     }
