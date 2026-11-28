@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\InstituteController;
 use App\Http\Controllers\Admin\ProgramController;
@@ -45,6 +46,10 @@ Route::middleware('auth')->group(function () {
 
     Route::put('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
+
+    // Theme Customization
+    Route::put('/theme', [ThemeController::class, 'update'])
+        ->name('theme.update');
 
     // Shared Penalty Viewing (Officer and Adviser)
     Route::get('/events/{event}/penalties', [PenaltyController::class, 'index'])

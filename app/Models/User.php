@@ -20,6 +20,7 @@ class User extends Authenticatable
         'password',
         'role_id',
         'photo',
+        'theme',
     ];
 
     protected $hidden = [
@@ -76,3 +77,4 @@ class User extends Authenticatable
         return $this->hasMany(Announcement::class);
     }
 }
+
