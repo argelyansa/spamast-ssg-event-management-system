@@ -15,6 +15,7 @@ use App\Http\Controllers\Officer\PenaltyController;
 use App\Http\Controllers\Student\AttendanceController;
 use App\Http\Controllers\Student\EventController as StudentEventController;
 use App\Http\Controllers\Adviser\AttendanceController as AdviserAttendanceController;
+use App\Http\Controllers\Adviser\EventController as AdviserEventController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AnnouncementController;
 
@@ -148,6 +149,14 @@ Route::middleware('role:Officer,Adviser,Student')->group(function () {
     Route::prefix('adviser')->name('adviser.')->middleware('role:Adviser')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'adviser'])
             ->name('dashboard');
+
+        // Adviser Read-Only Event Browsing
+        Route::get('/events', [AdviserEventController::class, 'index'])
+            ->name('events.index');
+
+        // Adviser Read-Only Fines and Sanctions
+        Route::get('/penalties/events', [AdviserEventController::class, 'penaltiesEvents'])
+            ->name('penalties.events');
 
         // Adviser Read-Only Attendance Records
         Route::get('/attendance', [AdviserAttendanceController::class, 'events'])
