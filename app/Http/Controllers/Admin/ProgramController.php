@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Support\DashboardStatsCache;
 
 class ProgramController extends Controller
 {
@@ -69,6 +70,8 @@ class ProgramController extends Controller
             'updated_at' => now(),
         ]);
 
+        DashboardStatsCache::forgetAdmin();
+
         return redirect()
             ->route('admin.programs.index')
             ->with('success', 'Academic program created successfully.');
@@ -121,6 +124,8 @@ class ProgramController extends Controller
                 'updated_at' => now(),
             ]);
 
+        DashboardStatsCache::forgetAdmin();
+
         return redirect()
             ->route('admin.programs.index')
             ->with('success', 'Academic program updated successfully.');
@@ -147,6 +152,8 @@ class ProgramController extends Controller
         DB::table('programs')
             ->where('id', $id)
             ->delete();
+
+        DashboardStatsCache::forgetAdmin();
 
         return redirect()
             ->route('admin.programs.index')

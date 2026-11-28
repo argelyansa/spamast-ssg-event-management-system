@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\Institute;
 use App\Models\Program;
 use App\Models\Student;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -107,6 +108,12 @@ class UserController extends Controller
                 ]);
             }
         });
+
+        DashboardStatsCache::forgetAdmin();
+
+        if ((int) $validated['role_id'] === (int) $studentRoleId) {
+            DashboardStatsCache::forgetOfficer();
+        }
 
         return redirect()
             ->route('admin.users.index')
@@ -240,6 +247,10 @@ class UserController extends Controller
             }
         });
 
+        DashboardStatsCache::forgetAdmin();
+
+        DashboardStatsCache::forgetOfficer();
+
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User account updated successfully.');
@@ -253,6 +264,15 @@ class UserController extends Controller
             ], true),
             404
         );
+
+        $isStudent = $user->student !== null;
+
+        DashboardStatsCache::forgetAdmin();
+
+        if ($isStudent) {
+            DashboardStatsCache::forgetOfficer();
+            DashboardStatsCache::forgetStudent((int) $user->id);
+        }
 
         $user->delete();
 

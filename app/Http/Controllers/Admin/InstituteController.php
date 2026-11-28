@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use App\Support\DashboardStatsCache;
 
 class InstituteController extends Controller
 {
@@ -46,6 +47,8 @@ class InstituteController extends Controller
             'updated_at' => now(),
         ]);
 
+        DashboardStatsCache::forgetAdmin();
+
         return redirect()
             ->route('admin.institutes.index')
             ->with('success', 'Institute created successfully.');
@@ -84,6 +87,8 @@ class InstituteController extends Controller
                 'updated_at' => now(),
             ]);
 
+        DashboardStatsCache::forgetAdmin();
+
         return redirect()
             ->route('admin.institutes.index')
             ->with('success', 'Institute updated successfully.');
@@ -106,6 +111,8 @@ class InstituteController extends Controller
         }
 
         DB::table('institutes')->where('id', $id)->delete();
+
+        DashboardStatsCache::forgetAdmin();
 
         return redirect()
             ->route('admin.institutes.index')
