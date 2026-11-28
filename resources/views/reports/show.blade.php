@@ -35,12 +35,22 @@
             box-shadow: none !important;
             border: 1px solid #ccc !important;
             border-radius: 5px !important;
-            margin-bottom: 12px !important;
+            margin-bottom: 6px !important;
             break-inside: avoid;
         }
 
         .card-body {
-            padding: 12px !important;
+            padding: 7px !important;
+        }
+
+        h2, h3, h5 {
+            margin-top: 0 !important;
+            margin-bottom: 5px !important;
+        }
+
+        .row {
+            margin-top: 4px !important;
+            margin-bottom: 6px !important;
         }
 
         .row {
@@ -85,8 +95,8 @@
         }
 
         .student-records {
-            break-before: page;
-            page-break-before: always;
+            break-before: auto;
+            page-break-before: auto;
         }
 
         .student-records .card {
@@ -161,7 +171,7 @@
     <div class="col-md-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <div class="text-muted">Total Students</div>
+                <div class="text-muted">Students Checked In</div>
                 <h2 class="fw-bold text-primary">
                     {{ $grandTotals->total_students ?? 0 }}
                 </h2>
@@ -172,7 +182,7 @@
     <div class="col-md-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <div class="text-muted">Male Students</div>
+                <div class="text-muted">Male Students Checked In</div>
                 <h2 class="fw-bold">
                     {{ $grandTotals->male_count ?? 0 }}
                 </h2>
@@ -183,7 +193,7 @@
     <div class="col-md-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <div class="text-muted">Female Students</div>
+                <div class="text-muted">Female Students Checked In</div>
                 <h2 class="fw-bold">
                     {{ $grandTotals->female_count ?? 0 }}
                 </h2>
@@ -338,3 +348,6 @@
 </div>
 
 @endsection
+
+
+
