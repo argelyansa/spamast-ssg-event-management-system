@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Officer;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventSession;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,6 +76,7 @@ class EventController extends Controller
                 'min:0',
                 'max:999999.99',
             ],
+            'show_on_homepage' => ['nullable', 'boolean'],
             'sessions' => ['required', 'array'],
         ];
 
@@ -108,6 +110,7 @@ class EventController extends Controller
         }
 
         $validated = $request->validate($rules);
+        $validated['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         $event = DB::transaction(function () use (
             $validated,
@@ -136,6 +139,8 @@ class EventController extends Controller
 
             return $event;
         });
+
+        DashboardStatsCache::forgetEventStats();
 
         return redirect()
             ->route('officer.events.index')
@@ -223,6 +228,7 @@ class EventController extends Controller
                 'min:0',
                 'max:999999.99',
             ],
+            'show_on_homepage' => ['nullable', 'boolean'],
             'sessions' => ['required', 'array'],
         ];
 
@@ -249,6 +255,7 @@ class EventController extends Controller
         }
 
         $validated = $request->validate($rules);
+        $validated['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         DB::transaction(function () use (
             $validated,
@@ -308,16 +315,54 @@ class EventController extends Controller
             }
         });
 
+        DashboardStatsCache::forgetEventStats();
+
         return redirect()
             ->route('officer.events.index')
             ->with('success', 'Event and session details updated successfully.');
     }
 
+    public function penaltiesEvents(Request $request): View
+    {
+        $validated = $request->validate([
+            'tab' => ['nullable', 'in:upcoming,past'],
+            'event_date' => ['nullable', 'date'],
+        ]);
+
+        $activeTab = $validated['tab'] ?? 'upcoming';
+
+        $query = Event::with('creator');
+
+        if ($activeTab === 'upcoming') {
+            $query->whereDate('event_date', '>=', today());
+        } else {
+            $query->whereDate('event_date', '<', today());
+        }
+
+        if (!empty($validated['event_date'])) {
+            $query->whereDate('event_date', $validated['event_date']);
+        }
+
+        $events = $query
+            ->orderBy('event_date', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        $searchDate = $validated['event_date'] ?? '';
+
+        return view('officer.penalties.events', compact(
+            'events',
+            'activeTab',
+            'searchDate'
+        ));
+    }
     public function destroy(Event $event): RedirectResponse
     {
         Gate::authorize('delete', $event);
 
         $event->delete();
+
+        DashboardStatsCache::forgetEventStats();
 
         return redirect()
             ->route('officer.events.index')

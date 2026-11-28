@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Support\DashboardStatsCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -35,6 +36,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'show_on_homepage' => ['nullable', 'boolean'],
             'attachment' => [
                 'nullable',
                 'file',
@@ -43,6 +45,7 @@ class AnnouncementController extends Controller
             ],
         ]);
 
+        $validated['show_on_homepage'] = $request->boolean('show_on_homepage');
         $validated['user_id'] = auth()->id();
 
         if ($request->hasFile('attachment')) {
@@ -52,6 +55,8 @@ class AnnouncementController extends Controller
         }
 
         Announcement::create($validated);
+
+        DashboardStatsCache::forgetOfficer();
 
         return redirect()
             ->route('announcements.index')
@@ -68,6 +73,7 @@ class AnnouncementController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'show_on_homepage' => ['nullable', 'boolean'],
             'attachment' => [
                 'nullable',
                 'file',
@@ -75,6 +81,8 @@ class AnnouncementController extends Controller
                 'max:5120',
             ],
         ]);
+
+        $validated['show_on_homepage'] = $request->boolean('show_on_homepage');
 
         $oldAttachment = $announcement->attachment;
 
@@ -93,6 +101,8 @@ class AnnouncementController extends Controller
             Storage::disk('public')->delete($oldAttachment);
         }
 
+        DashboardStatsCache::forgetOfficer();
+
         return redirect()
             ->route('announcements.index')
             ->with('success', 'Announcement updated successfully.');
@@ -105,6 +115,8 @@ class AnnouncementController extends Controller
         }
 
         $announcement->delete();
+
+        DashboardStatsCache::forgetOfficer();
 
         return redirect()
             ->route('announcements.index')

@@ -12,6 +12,7 @@ class Announcement extends Model
         'title',
         'body',
         'attachment',
+        'show_on_homepage',
     ];
 
     public function user(): BelongsTo

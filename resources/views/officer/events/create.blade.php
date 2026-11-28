@@ -125,6 +125,19 @@
                     </div>
                 </div>
 
+                <div class="form-check form-switch mt-4">
+                    <input class="form-check-input" type="checkbox"
+                           id="show_on_homepage" name="show_on_homepage"
+                           value="1" {{ old('show_on_homepage') ? 'checked' : '' }}>
+                    <label class="form-check-label fw-semibold" for="show_on_homepage">
+                        Show on Public Homepage
+                    </label>
+                    <div class="form-text">
+                        Enable this to display the event details on the public SPAMAST SSG homepage.
+                        Attendance records, sessions, and fines will never be displayed publicly.
+                    </div>
+                </div>
+
                 <hr class="my-5">
 
                 <div class="mb-4">

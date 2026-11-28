@@ -17,6 +17,7 @@ class Event extends Model
         'availability',
         'fine_per_miss',
         'created_by',
+        'show_on_homepage',
     ];
 
     protected function casts(): array
